@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yeboah Engine v3.1.10 | Professional Research Grade</title>
+    <title>Yeboah Engine v3.1.10 | The Yeboah Institute</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; }
@@ -22,7 +23,7 @@
             border-radius: 0 12px 12px 0;
             outline: none;
             cursor: pointer;
-            min-width: 75px;
+            min-width: 80px;
         }
         .preset-select {
             background-color: #0f172a;
@@ -46,6 +47,21 @@
             animation: scan 2s linear infinite;
         }
         @keyframes scan { from { top: 0%; } to { top: 100%; } }
+
+        /* Fraction Styling for the Formula */
+        .math-fraction {
+            display: inline-flex;
+            flex-direction: column;
+            vertical-align: middle;
+            align-items: center;
+            padding: 0 4px;
+        }
+        .math-numerator { border-bottom: 1px solid #60a5fa; padding: 0 2px; }
+        .math-denominator { padding: 0 2px; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #020617; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
     </style>
 </head>
 <body class="min-h-screen pb-12">
@@ -62,10 +78,20 @@
                     <p class="text-[8px] text-slate-500 font-bold tracking-[0.3em] uppercase">The Yeboah Institute Research Ghana</p>
                 </div>
             </div>
-            <div class="flex bg-slate-950 border border-blue-500/30 rounded-xl px-4 py-2 items-center gap-4">
-                <div class="text-right">
-                    <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest">Dimensionless Efficiency Index</p>
-                    <div class="text-xs font-serif italic font-bold text-blue-400">η = (k<sub>Y</sub> · ½mv²) / (d · τ · A)</div>
+            
+            <!-- UPDATED FORMULA DISPLAY -->
+            <div class="flex bg-slate-950 border border-blue-500/30 rounded-xl px-6 py-2 items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest border-r border-slate-800 pr-4">Dimensionless Efficiency Index</p>
+                    <div class="flex items-center text-sm font-serif italic font-bold text-blue-400">
+                        <span>η = k<sub>Y</sub></span>
+                        <span class="text-lg ml-1">(</span>
+                        <div class="math-fraction text-[11px]">
+                            <span class="math-numerator">mv<sup>2</sup></span>
+                            <span class="math-denominator">2dτA</span>
+                        </div>
+                        <span class="text-lg">)</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -81,7 +107,6 @@
                 </h2>
                 
                 <div class="space-y-5">
-                    <!-- kY with Presets -->
                     <div>
                         <label class="text-[10px] font-black text-blue-400 uppercase mb-1 block">Yeboah Constant (k<sub>Y</sub>)</label>
                         <select id="kyPreset" onchange="applyPreset()" class="preset-select">
@@ -94,7 +119,6 @@
                         <input type="number" id="ky" value="0.95" step="0.01" oninput="calculate()" class="w-full bg-slate-950 border border-slate-800 no-unit-radius px-4 py-3 text-sm font-mono text-white outline-none focus:border-blue-500">
                     </div>
 
-                    <!-- Mass -->
                     <div>
                         <label class="text-[10px] font-black text-slate-500 uppercase mb-1 block">Mass (m)</label>
                         <div class="input-group">
@@ -106,7 +130,6 @@
                         </div>
                     </div>
 
-                    <!-- Velocity -->
                     <div>
                         <label class="text-[10px] font-black text-slate-500 uppercase mb-1 block">Velocity (v)</label>
                         <div class="input-group">
@@ -118,7 +141,6 @@
                         </div>
                     </div>
 
-                    <!-- Thickness -->
                     <div>
                         <label class="text-[10px] font-black text-slate-500 uppercase mb-1 block">Thickness (d)</label>
                         <div class="input-group">
@@ -131,7 +153,6 @@
                         </div>
                     </div>
 
-                    <!-- Toughness -->
                     <div>
                         <label class="text-[10px] font-black text-slate-500 uppercase mb-1 block">Toughness (τ)</label>
                         <div class="input-group">
@@ -144,7 +165,6 @@
                         </div>
                     </div>
 
-                    <!-- Area -->
                     <div>
                         <label class="text-[10px] font-black text-slate-500 uppercase mb-1 block">Contact Area (A)</label>
                         <div class="input-group">
@@ -205,9 +225,52 @@
                 </div>
             </div>
 
+            <!-- RESEARCH GRAPH -->
+            <div class="glass rounded-[2rem] p-8 border border-slate-800">
+                <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-6 flex items-center gap-2">
+                    <i data-lucide="line-chart" class="w-4 h-4 text-blue-500"></i> Resistance (J) vs Effective Energy (J)
+                </h3>
+                <div class="w-full h-64 bg-slate-950/50 rounded-2xl p-4">
+                    <canvas id="researchChart"></canvas>
+                </div>
+            </div>
+
+            <!-- SI VECTOR ANALYSIS -->
+            <div class="glass rounded-[2rem] p-8 border-t-4 border-blue-500">
+                <h3 class="text-[10px] font-black uppercase tracking-widest text-blue-400 mb-6 flex items-center gap-2">
+                    <i data-lucide="layers" class="w-4 h-4"></i> SI Vector Analysis (Normalized Values)
+                </h3>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-y-6 gap-x-4">
+                    <div class="border-l border-slate-800 pl-4">
+                        <p class="text-[8px] font-black text-slate-500 uppercase">Kinetic Mass (kg)</p>
+                        <p id="si-mass" class="text-sm mono text-white">0.000</p>
+                    </div>
+                    <div class="border-l border-slate-800 pl-4">
+                        <p class="text-[8px] font-black text-slate-500 uppercase">Velocity Vector (m/s)</p>
+                        <p id="si-velocity" class="text-sm mono text-white">0.000</p>
+                    </div>
+                    <div class="border-l border-slate-800 pl-4">
+                        <p class="text-[8px] font-black text-slate-500 uppercase">Yeboah Constant (kY)</p>
+                        <p id="si-ky" class="text-sm mono text-white">0.000</p>
+                    </div>
+                    <div class="border-l border-slate-800 pl-4">
+                        <p class="text-[8px] font-black text-slate-500 uppercase">Thickness (m)</p>
+                        <p id="si-thickness" class="text-sm mono text-white">0.000</p>
+                    </div>
+                    <div class="border-l border-slate-800 pl-4">
+                        <p class="text-[8px] font-black text-slate-500 uppercase">Toughness (Pa)</p>
+                        <p id="si-toughness" class="text-sm mono text-white">0.000</p>
+                    </div>
+                    <div class="border-l border-slate-800 pl-4">
+                        <p class="text-[8px] font-black text-slate-500 uppercase">Contact Area (m²)</p>
+                        <p id="si-area" class="text-sm mono text-white">0.000</p>
+                    </div>
+                </div>
+            </div>
+
             <!-- Optimization Strategy -->
             <div class="glass rounded-[2.5rem] p-8">
-                <h3 class="text-[10px] font-black uppercase tracking-widest text-blue-400 mb-6">Optimization Strategy</h3>
+                <h3 class="text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-6">Optimization Strategy</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="p-6 rounded-3xl bg-slate-950 border border-slate-800">
                         <p class="text-[10px] font-black text-blue-500 uppercase mb-2">Kinematic Vector</p>
@@ -234,7 +297,39 @@
     <script>
         lucide.createIcons();
 
-        // Handle kY Presets
+        // Initialize Chart
+        const ctx = document.getElementById('researchChart').getContext('2d');
+        let researchChart = new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Current System State',
+                    data: [{ x: 0, y: 0 }],
+                    backgroundColor: '#10b981',
+                    pointRadius: 8,
+                    pointHoverRadius: 10,
+                    showLine: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Effective Energy (J)', color: '#94a3b8', font: { size: 10, weight: 'bold' } },
+                        grid: { color: 'rgba(30, 41, 59, 0.5)', borderDash: [5, 5] },
+                        ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 9 }, callback: (v) => v.toExponential(1) }
+                    },
+                    y: {
+                        title: { display: true, text: 'Resistance (J)', color: '#94a3b8', font: { size: 10, weight: 'bold' } },
+                        grid: { color: 'rgba(30, 41, 59, 0.5)', borderDash: [5, 5] },
+                        ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 9 }, callback: (v) => v.toExponential(1) }
+                    }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+
         function applyPreset() {
             const preset = document.getElementById('kyPreset').value;
             if (preset !== "custom") {
@@ -244,44 +339,49 @@
         }
 
         function calculate() {
-            // 1. DATA ACQUISITION & SI NORMALIZATION
             const ky = parseFloat(document.getElementById('ky').value) || 0;
-            
-            // Mass -> kg
-            const m = (parseFloat(document.getElementById('mass').value) || 0) * parseFloat(document.getElementById('massUnit').value);
-            // Velocity -> m/s
+            const m_SI = (parseFloat(document.getElementById('mass').value) || 0) * parseFloat(document.getElementById('massUnit').value);
             const vFactor = parseFloat(document.getElementById('velocityUnit').value);
-            const v = (parseFloat(document.getElementById('velocity').value) || 0) * vFactor;
-            // Thickness -> m
-            const d = (parseFloat(document.getElementById('thickness').value) || 0) * parseFloat(document.getElementById('thicknessUnit').value);
-            // Toughness -> Pa
-            const tau = (parseFloat(document.getElementById('toughness').value) || 0) * parseFloat(document.getElementById('toughnessUnit').value);
-            // Area -> m2
+            const v_SI = (parseFloat(document.getElementById('velocity').value) || 0) * vFactor;
+            const d_SI = (parseFloat(document.getElementById('thickness').value) || 0) * parseFloat(document.getElementById('thicknessUnit').value);
+            const tau_SI = (parseFloat(document.getElementById('toughness').value) || 0) * parseFloat(document.getElementById('toughnessUnit').value);
             const aFactor = parseFloat(document.getElementById('areaUnit').value);
-            const A = (parseFloat(document.getElementById('area').value) || 0) * aFactor;
+            const A_SI = (parseFloat(document.getElementById('area').value) || 0) * aFactor;
 
-            // 2. DIMENSIONLESS PHYSICS (Joule vs Joule)
-            const kineticEnergy = 0.5 * m * Math.pow(v, 2);
+            const kineticEnergy = 0.5 * m_SI * Math.pow(v_SI, 2);
             const effectiveEnergy = ky * kineticEnergy; 
-            const separationWork = d * tau * A;
+            const separationWork = d_SI * tau_SI * A_SI;
 
             const eta = separationWork > 0 ? (effectiveEnergy / separationWork) : 0;
             const success = eta >= 1;
 
-            // 3. OPTIMIZATION CALCULATIONS
-            const reqV_SI = (ky > 0 && m > 0 && separationWork > 0) ? Math.sqrt((2 * separationWork) / (m * ky)) : 0;
+            const reqV_SI = (ky > 0 && m_SI > 0 && separationWork > 0) ? Math.sqrt((2 * separationWork) / (m_SI * ky)) : 0;
             const reqV_UI = reqV_SI / vFactor;
-            
-            const reqA_SI = (d > 0 && tau > 0) ? (ky * 0.5 * m * Math.pow(v, 2)) / (d * tau) : 0;
+            const reqA_SI = (d_SI > 0 && tau_SI > 0) ? (ky * 0.5 * m_SI * Math.pow(v_SI, 2)) / (d_SI * tau_SI) : 0;
             const reqA_UI = reqA_SI / aFactor;
 
-            // 4. UI UPDATES
+            // Update Chart
+            researchChart.data.datasets[0].data = [{ x: effectiveEnergy, y: separationWork }];
+            researchChart.data.datasets[0].backgroundColor = success ? '#10b981' : '#f43f5e';
+            const maxVal = Math.max(effectiveEnergy, separationWork) * 1.5;
+            researchChart.options.scales.x.max = maxVal || 1;
+            researchChart.options.scales.y.max = maxVal || 1;
+            researchChart.update('none');
+
+            // UI Updates
             document.getElementById('etaDisplay').innerText = eta.toFixed(4);
-            document.getElementById('keDisplay').innerText = kineticEnergy.toFixed(4) + " J";
-            document.getElementById('resDisplay').innerText = separationWork.toFixed(4) + " J";
+            document.getElementById('keDisplay').innerText = kineticEnergy.toExponential(4) + " J";
+            document.getElementById('resDisplay').innerText = separationWork.toExponential(4) + " J";
             
             const vUnitLabel = document.getElementById('velocityUnit').options[document.getElementById('velocityUnit').selectedIndex].text;
             document.getElementById('reqVDisplay').innerText = reqV_UI.toFixed(2) + " " + vUnitLabel;
+
+            document.getElementById('si-mass').innerText = m_SI.toExponential(4);
+            document.getElementById('si-velocity').innerText = v_SI.toFixed(4);
+            document.getElementById('si-ky').innerText = ky.toFixed(4);
+            document.getElementById('si-thickness').innerText = d_SI.toExponential(4);
+            document.getElementById('si-toughness').innerText = tau_SI.toExponential(4);
+            document.getElementById('si-area').innerText = A_SI.toExponential(4);
 
             const statusCard = document.getElementById('statusCard');
             const badge = document.getElementById('badge');
@@ -293,7 +393,6 @@
                 badge.className = "flex items-center gap-3 px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest bg-emerald-500 text-white";
                 badge.innerHTML = '<i data-lucide="check-circle-2" class="w-4 h-4"></i> Separation Achieved';
                 etaDisplay.className = "text-7xl font-black tracking-tighter mb-6 text-emerald-400 drop-shadow-[0_0_20px_rgba(52,211,153,0.3)]";
-                
                 document.getElementById('kinematicText').innerText = "Kinematic energy is sufficient. You can reduce velocity to " + reqV_UI.toFixed(2) + " " + vUnitLabel + " to maintain the threshold.";
                 document.getElementById('geometricText').innerText = "Geometric resistance is overcome. Maximum allowable contact area for this energy state is " + reqA_UI.toFixed(4) + " " + aUnitLabel + ".";
             } else {
@@ -301,7 +400,6 @@
                 badge.className = "flex items-center gap-3 px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest bg-rose-500 text-white";
                 badge.innerHTML = '<i data-lucide="alert-triangle" class="w-4 h-4"></i> Energy Deficit';
                 etaDisplay.className = "text-7xl font-black tracking-tighter mb-6 text-rose-400";
-
                 document.getElementById('kinematicText').innerText = "Critical energy deficit. Increase velocity to " + reqV_UI.toFixed(2) + " " + vUnitLabel + " to achieve the η=1 separation threshold.";
                 document.getElementById('geometricText').innerText = "Resistance is too high. Reduce contact area (A) to below " + reqA_UI.toFixed(4) + " " + aUnitLabel + " to enable separation.";
             }
@@ -314,9 +412,8 @@
             btn.disabled = true;
             btn.innerText = "Analyzing Edge...";
             line.style.display = "block";
-
             setTimeout(() => {
-                document.getElementById('areaUnit').value = "0.000001"; // Reset to mm2 for scan
+                document.getElementById('areaUnit').value = "0.000001";
                 const randomArea = (Math.random() * 0.35 + 0.05).toFixed(3);
                 document.getElementById('area').value = randomArea;
                 line.style.display = "none";
@@ -329,15 +426,20 @@
 
         function downloadReport() {
             const eta = document.getElementById('etaDisplay').innerText;
-            const ke = document.getElementById('keDisplay').innerText;
-            const ws = document.getElementById('resDisplay').innerText;
             const report = `YEBOAH ENGINE RESEARCH REPORT v3.1.10\n` +
                 `Timestamp: ${new Date().toLocaleString()}\n` +
                 `---------------------------------------\n` +
                 `Yeboah Constant (kY): ${document.getElementById('ky').value}\n` +
-                `Kinetic Energy (E_k): ${ke}\n` +
-                `Separation Work (W_s): ${ws}\n` +
+                `Effective Energy (E_eff): ${document.getElementById('keDisplay').innerText}\n` +
+                `Resistance (W_s): ${document.getElementById('resDisplay').innerText}\n` +
                 `Dimensionless Index (η): ${eta}\n` +
+                `---------------------------------------\n` +
+                `SI VECTOR ANALYSIS:\n` +
+                `Mass: ${document.getElementById('si-mass').innerText} kg\n` +
+                `Velocity: ${document.getElementById('si-velocity').innerText} m/s\n` +
+                `Thickness: ${document.getElementById('si-thickness').innerText} m\n` +
+                `Toughness: ${document.getElementById('si-toughness').innerText} Pa\n` +
+                `Area: ${document.getElementById('si-area').innerText} m2\n` +
                 `---------------------------------------\n` +
                 `The Yeboah Institute Research Ghana`;
             const blob = new Blob([report], { type: 'text/plain' });
@@ -348,7 +450,6 @@
             link.click();
         }
 
-        // Initial Run
         calculate();
     </script>
 </body>
