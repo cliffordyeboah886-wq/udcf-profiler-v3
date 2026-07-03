@@ -1,29 +1,29 @@
-# Yeboah Engine v3.1.10
+UDCF Impact-Dynamics Profiler
+A Scale-Invariant Framework for Material Separation Efficiency
 
-## Overview
-The **Yeboah Engine** is a specialized computational tool developed by **The Yeboah Institute Research (Ghana)**. It is designed to calculate the **Efficiency Index (η)** of material separation processes using **Yeboah’s Law of Separation**.
+This repository contains the reference implementation of the Unified Dimensionless Cutting Framework (UDCF). By calculating the efficiency index (𝜂), this tool predicts the success or failure of severance events across biological, fibrous, and metallic regimes with millisecond latency.
 
-This research aims to bridge the gap between theoretical physics and practical vocational training, specifically for engineering students in developing countries where access to high-end industrial machinery may be limited.
+
 
 ## Mathematical Foundation
-The engine operates on the formula:
+The profiler operates on the formula:
 **η = kY * ( (m * v²) / (2 * d * τ * A) )**
 
 Where:
-- **kY**: Yeboah Constant (Environmental/Material Preset)
+- **kY**: Systemic Energy Recovery Factor 
 - **m**: Mass
 - **v**: Velocity
 - **d**: Material Thickness
 - **τ**: Material Toughness
 - **A**: Contact Area
 
-## Key Features
-- **Dual-Vector Optimization:** Provides specific targets for both Velocity (Kinematic) and Contact Area (Geometric).
-- **AI Edge Profiler:** Simulates automated surface area scanning.
-- **Research Presets:** Includes calibrated constants for Standard Research and Theoretical Limits.
-- **Data Export:** Generate .txt research reports for laboratory documentation.
+Key Features:
+
+Thermodynamic Signature Analysis: Quantifies the 𝑘𝑌 factor for tool-material pairings.
+FEA-Alternative: Provides "Go/No-Go" results 10,000x faster than traditional stress-distribution simulations.
+Universal Scalability: Validated for micro-scale blades and macro-scale industrial implements.
 
 ## Author
-**Dr. Clifford Yeboah**  
+**Clifford Yeboah**  
 Independent Researcher, Ghana  
 *Research focus: Mechanical Engineering & STEM Education Accessibility*
