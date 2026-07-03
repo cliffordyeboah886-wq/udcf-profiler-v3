@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yeboah Engine v3.1.10 | The Yeboah Institute</title>
+    <title>udcf-profiler-v3.1 | The Yeboah Institute</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -108,7 +108,7 @@
                 
                 <div class="space-y-5">
                     <div>
-                        <label class="text-[10px] font-black text-blue-400 uppercase mb-1 block">Yeboah Constant (k<sub>Y</sub>)</label>
+                        <label class="text-[10px] font-black text-blue-400 uppercase mb-1 block"> Constant (k<sub>Y</sub>)</label>
                         <select id="kyPreset" onchange="applyPreset()" class="preset-select">
                             <option value="0.95">Standard Research (0.95)</option>
                             <option value="1.00">Theoretical Limit (1.00)</option>
@@ -426,7 +426,7 @@
 
         function downloadReport() {
             const eta = document.getElementById('etaDisplay').innerText;
-            const report = `YEBOAH ENGINE RESEARCH REPORT v3.1.10\n` +
+            const report = `udcf-profiler REPORT v3.1\n` +
                 `Timestamp: ${new Date().toLocaleString()}\n` +
                 `---------------------------------------\n` +
                 `Yeboah Constant (kY): ${document.getElementById('ky').value}\n` +
