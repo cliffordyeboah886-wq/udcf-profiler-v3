@@ -20,7 +20,7 @@ Where:
 Key Features:
 
 Thermodynamic Signature Analysis: Quantifies the 𝑘𝑌 factor for tool-material pairings.
-FEA-Alternative: Provides "Go/No-Go" results 10,000x faster than traditional stress-distribution simulations.
+FEA-Alternative: Provides Binary predictive threshold for structural severance results 10,000x faster than traditional stress-distribution simulations.
 Universal Scalability: Validated for micro-scale blades and macro-scale industrial implements.
 
 ## Author
