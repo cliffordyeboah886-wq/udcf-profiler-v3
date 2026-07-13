@@ -41,13 +41,6 @@
         input[type="number"] { border-radius: 12px 0 0 12px !important; }
         .no-unit-radius { border-radius: 12px !important; }
         
-        .scan-line {
-            position: absolute; width: 100%; height: 2px; background: #3b82f6;
-            box-shadow: 0 0 15px #3b82f6; top: 0; display: none;
-            animation: scan 2s linear infinite;
-        }
-        @keyframes scan { from { top: 0%; } to { top: 100%; } }
-
         /* Fraction Styling for the Formula */
         .math-fraction {
             display: inline-flex;
@@ -79,7 +72,7 @@
                 </div>
             </div>
             
-            <!-- UPDATED FORMULA DISPLAY -->
+            <!-- FORMULA DISPLAY -->
             <div class="flex bg-slate-950 border border-blue-500/30 rounded-xl px-6 py-2 items-center gap-4">
                 <div class="flex items-center gap-3">
                     <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest border-r border-slate-800 pr-4">Dimensionless Efficiency Index</p>
@@ -165,11 +158,11 @@
                         </div>
                     </div>
 
-                    <div>
-                        <label class="text-[10px] font-black text-slate-500 uppercase mb-1 block">Contact Area (A)</label>
+                    <div class="pt-2 border-t border-slate-800">
+                        <label class="text-[10px] font-black text-blue-400 uppercase mb-1 block">Contact Area (A)</label>
                         <div class="input-group">
-                            <input type="number" id="area" value="0.5" oninput="calculate()" class="flex-1 bg-slate-950 border border-slate-800 px-4 py-3 text-sm font-mono text-white outline-none">
-                            <select id="areaUnit" onchange="calculate()" class="unit-select">
+                            <input type="number" id="area" value="0.5" oninput="calculate()" class="flex-1 bg-blue-950/30 border border-blue-500/50 px-4 py-3 text-sm font-mono text-blue-300 outline-none">
+                            <select id="areaUnit" onchange="calculate()" class="unit-select !border-blue-500/50 !bg-blue-900/20">
                                 <option value="0.000001">mm²</option>
                                 <option value="1">m²</option>
                                 <option value="0.000000000001">μm²</option>
@@ -179,20 +172,58 @@
                 </div>
             </section>
 
-            <!-- AI SCANNER -->
-            <section class="glass rounded-[2rem] p-6 relative overflow-hidden">
-                <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 mb-4">
-                    <i data-lucide="scan" class="w-4 h-4 text-blue-500"></i> AI Edge Profiler
+            <!-- TOOL LIBRARY & EDGE GEOMETRY (Replaces AI Scanner) -->
+            <section class="glass rounded-[2rem] p-6 relative overflow-hidden border-t-4 border-indigo-500">
+                <h3 class="text-[10px] font-black uppercase tracking-widest text-indigo-400 flex items-center gap-2 mb-4">
+                    <i data-lucide="database" class="w-4 h-4 text-indigo-500"></i> Tool Library & Edge Geometry
                 </h3>
-                <div class="relative aspect-video bg-black rounded-2xl border border-slate-800 overflow-hidden mb-4">
-                    <div id="scanLine" class="scan-line"></div>
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <i data-lucide="camera" class="w-12 h-12 text-blue-500/10"></i>
+                <p class="text-[10px] text-slate-400 mb-4 leading-relaxed">Select a tool from the library or manually input the edge radius (R) and contact length (L) to calculate the Contact Area (A).</p>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-[10px] font-black text-slate-500 uppercase mb-1 block">Tool Library</label>
+                        <select id="toolLibrary" onchange="handleToolChange()" class="preset-select">
+                            <option value="">-- Select a Tool --</option>
+                            <option value="0.1">Razor Blade (0.1 μm)</option>
+                            <option value="0.15">Scalpel (0.15 μm)</option>
+                            <option value="0.65">Kitchen Knife (0.65 μm)</option>
+                            <option value="12.5">Wood Chisel (12.5 μm)</option>
+                            <option value="40">Cutlass / Machete (40 μm)</option>
+                            <option value="65">Axe (Sharp) (65 μm)</option>
+                            <option value="150">Industrial Shear (150 μm)</option>
+                            <option value="250">Axe (Blunt) (250 μm)</option>
+                            <option value="custom">Custom Input</option>
+                        </select>
                     </div>
+
+                    <div>
+                        <label class="text-[10px] font-black text-slate-500 uppercase mb-1 block">Edge Radius (R)</label>
+                        <div class="input-group">
+                            <input type="number" id="edgeRadius" placeholder="e.g. 0.1" class="flex-1 bg-slate-950 border border-slate-800 px-4 py-3 text-sm font-mono text-white outline-none">
+                            <select id="edgeRadiusUnit" class="unit-select">
+                                <option value="0.000001">μm</option>
+                                <option value="0.001">mm</option>
+                                <option value="1">m</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-[10px] font-black text-slate-500 uppercase mb-1 block">Contact Length (L)</label>
+                        <div class="input-group">
+                            <input type="number" id="contactLength" placeholder="e.g. 5" class="flex-1 bg-slate-950 border border-slate-800 px-4 py-3 text-sm font-mono text-white outline-none">
+                            <select id="contactLengthUnit" class="unit-select">
+                                <option value="0.001">mm</option>
+                                <option value="0.000001">μm</option>
+                                <option value="1">m</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button onclick="calculateAreaFromGeometry()" class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-black text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 mt-2">
+                        <i data-lucide="calculator" class="w-4 h-4"></i> Calculate Area
+                    </button>
                 </div>
-                <button onclick="startScan()" id="scanBtn" class="w-full py-4 bg-blue-600 hover:bg-blue-500 rounded-xl font-black text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2">
-                    <i data-lucide="zap" class="w-4 h-4"></i> Run AI Analysis
-                </button>
             </section>
         </div>
 
@@ -338,6 +369,46 @@
             calculate();
         }
 
+        // --- NEW EDGE GEOMETRY FUNCTIONS ---
+        function handleToolChange() {
+            const toolSelect = document.getElementById('toolLibrary');
+            const radiusInput = document.getElementById('edgeRadius');
+            const radiusUnit = document.getElementById('edgeRadiusUnit');
+
+            if (toolSelect.value && toolSelect.value !== 'custom') {
+                radiusInput.value = toolSelect.value;
+                radiusUnit.value = "0.000001"; // Set to μm
+            } else {
+                radiusInput.value = '';
+            }
+        }
+
+        function calculateAreaFromGeometry() {
+            const rVal = parseFloat(document.getElementById('edgeRadius').value);
+            const rUnit = parseFloat(document.getElementById('edgeRadiusUnit').value);
+            const lVal = parseFloat(document.getElementById('contactLength').value);
+            const lUnit = parseFloat(document.getElementById('contactLengthUnit').value);
+
+            if (isNaN(rVal) || isNaN(lVal)) {
+                alert("Please enter valid numbers for Edge Radius (R) and Contact Length (L).");
+                return;
+            }
+
+            // Calculate Area in m^2 (SI Unit)
+            const r_SI = rVal * rUnit;
+            const l_SI = lVal * lUnit;
+            const area_SI = r_SI * l_SI;
+
+            // Convert back to the currently selected Area Unit in the main parameters
+            const mainAreaUnit = parseFloat(document.getElementById('areaUnit').value);
+            const finalArea = area_SI / mainAreaUnit;
+
+            // Update main area input and trigger calculation
+            document.getElementById('area').value = finalArea.toExponential(4);
+            calculate();
+        }
+        // -----------------------------------
+
         function calculate() {
             const ky = parseFloat(document.getElementById('ky').value) || 0;
             const m_SI = (parseFloat(document.getElementById('mass').value) || 0) * parseFloat(document.getElementById('massUnit').value);
@@ -404,24 +475,6 @@
                 document.getElementById('geometricText').innerText = "Resistance is too high. Reduce contact area (A) to below " + reqA_UI.toFixed(4) + " " + aUnitLabel + " to enable separation.";
             }
             lucide.createIcons();
-        }
-
-        function startScan() {
-            const btn = document.getElementById('scanBtn');
-            const line = document.getElementById('scanLine');
-            btn.disabled = true;
-            btn.innerText = "Analyzing Edge...";
-            line.style.display = "block";
-            setTimeout(() => {
-                document.getElementById('areaUnit').value = "0.000001";
-                const randomArea = (Math.random() * 0.35 + 0.05).toFixed(3);
-                document.getElementById('area').value = randomArea;
-                line.style.display = "none";
-                btn.disabled = false;
-                btn.innerHTML = '<i data-lucide="zap" class="w-4 h-4"></i> Run AI Analysis';
-                calculate();
-                lucide.createIcons();
-            }, 2000);
         }
 
         function downloadReport() {
